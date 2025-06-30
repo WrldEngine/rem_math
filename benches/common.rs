@@ -1,6 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
 use rmath::native::sum_arr_int32;
 use rmath::native::sum_two_floats32;
+use rmath::native::sum_two_ints32;
 
 fn sum_arr_int32_benchmark(c: &mut Criterion) {
     let arr = black_box((1..1_000_000).collect::<Vec<i32>>());
@@ -38,11 +39,27 @@ fn sum_two_floats32_with_simd_benchmark(c: &mut Criterion) {
     });
 }
 
+fn sum_two_ints32_with_benchmark(c: &mut Criterion) {
+    let arr = black_box(vec![1; 800]);
+    c.bench_function("Array accumulation of two integer arrays", |b| {
+        b.iter(|| sum_two_ints32(arr.clone(), arr.clone(), false))
+    });
+}
+
+fn sum_two_ints32_with_simd_benchmark(c: &mut Criterion) {
+    let arr = black_box(vec![1; 800]);
+    c.bench_function("Array accumulation of two integer arrays with SIMD", |b| {
+        b.iter(|| sum_two_ints32(arr.clone(), arr.clone(), true))
+    });
+}
+
 criterion_group!(
     benches,
     sum_arr_int32_benchmark,
     sum_arr_int32_with_simd_benchmark,
     sum_two_floats32_benchmark,
     sum_two_floats32_with_simd_benchmark,
+    sum_two_ints32_with_benchmark,
+    sum_two_ints32_with_simd_benchmark,
 );
 criterion_main!(benches);

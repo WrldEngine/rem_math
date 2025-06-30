@@ -36,10 +36,28 @@ pub fn sum_two_floats32(
     Ok(native::sum_two_floats32(arr_1, arr_2, simd))
 }
 
+#[pyfunction]
+#[pyo3(signature = (arr_1, arr_2, simd = false))]
+pub fn sum_two_ints32(
+    _py: Python,
+    arr_1: Vec<i32>,
+    arr_2: Vec<i32>,
+    simd: bool,
+) -> PyResult<Vec<i64>> {
+    if arr_1.len() != arr_2.len() {
+        return Err(exceptions::PyBaseException::new_err(
+            "Array lengths should be equal",
+        ));
+    }
+
+    Ok(native::sum_two_ints32(arr_1, arr_2, simd))
+}
+
 #[pymodule]
 fn rmath(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(sum_nparr_int32, m)?)?;
     m.add_function(wrap_pyfunction!(sum_arr_int32, m)?)?;
     m.add_function(wrap_pyfunction!(sum_two_floats32, m)?)?;
+    m.add_function(wrap_pyfunction!(sum_two_ints32, m)?)?;
     Ok(())
 }

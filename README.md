@@ -2,6 +2,17 @@
 
 Work in progress
 
+## Examples
+Sum of two 32-bit integer array
+```py
+import rmath as rm
+
+array = [i for i in range(100_000_000)]
+sum_two_i32_result = rm.sum_two_ints32(array, array, simd=True)
+
+print(sum_two_i32_result)
+```
+
 ## Benchmarks (Python)
 ```
 --------------------------------------- benchmark 'arr_i32': 1 tests ---------------------------------------
@@ -41,3 +52,11 @@ Found 9 outliers among 100 measurements (9.00%)
   2 (2.00%) high mild
   7 (7.00%) high severe
 ```
+
+## Roadmap
+
+- Add GPU-accelerated operations for improved performance.
+- Implement own custom type objects for best performance from ecosystem.
+- Expand mathematical functionality with additional features and algorithms.
+
+Stay tuned for updates as the library evolves!
