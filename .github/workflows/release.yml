@@ -148,7 +148,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
-    needs: [test, linux, windows, sdist]
+    needs: [test, windows, sdist]
     permissions:
       id-token: write
       contents: write
