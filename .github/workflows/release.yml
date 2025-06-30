@@ -29,8 +29,6 @@ jobs:
           - runner: ubuntu-22.04
             target: aarch64
           - runner: ubuntu-22.04
-            target: armv7
-          - runner: ubuntu-22.04
             target: s390x
           - runner: ubuntu-22.04
           - runner: windows-latest
@@ -54,8 +52,6 @@ jobs:
             target: x86
           - runner: ubuntu-22.04
             target: aarch64
-          - runner: ubuntu-22.04
-            target: armv7
           - runner: ubuntu-22.04
             target: s390x
           - runner: ubuntu-22.04
@@ -85,8 +81,9 @@ jobs:
         platform:
           - runner: windows-latest
             target: x64
-          - runner: windows-latest
-            target: x86
+          # Extra specific case, for old windows versions
+          # - runner: windows-latest
+          #   target: x86
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
