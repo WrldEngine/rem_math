@@ -2,8 +2,6 @@ name: Release Rem Math
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "[0-200]+.[0-200]+.[0-200]+"
       - "[0-200]+.[0-200]+.[0-200]+a[0-9]+"
