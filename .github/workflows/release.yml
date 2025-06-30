@@ -81,9 +81,8 @@ jobs:
         platform:
           - runner: windows-latest
             target: x64
-          # Extra specific case, for old windows versions
-          # - runner: windows-latest
-          #   target: x86
+          - runner: windows-latest
+            target: x86
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -1,4 +1,8 @@
-use std::arch::x86_64::*;
+#![feature(stdsimd)]
+
+
+#[cfg(target_arch = "x86_64")]
+use core::arch::x86_64::*;
 
 const WAY_8_SZ: usize = 8;
 const WAY_4_SZ: usize = 4;
