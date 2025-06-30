@@ -2,6 +2,9 @@
 
 Work in progress
 
+## Installation
+`pip install rem-math`
+
 ## Examples
 Sum of two 32-bit integer array
 ```py
