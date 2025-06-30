@@ -1,4 +1,5 @@
 use rem_math::native::sum_arr_int32;
+use rem_math::native::sum_two_ints32;
 use rem_math::native::sum_two_floats32;
 
 #[test]
@@ -15,4 +16,13 @@ fn test_sum_two_floats32() {
 
     assert_eq!(expected_arr, sum_two_floats32(arr.clone(), arr.clone(), false));
     assert_eq!(expected_arr, sum_two_floats32(arr.clone(), arr.clone(), true));
+}
+
+#[test]
+fn test_sum_two_ints32() {
+    let arr = vec![1; 5];
+    let expected_arr = vec![2, 2, 2, 2, 2];
+
+    assert_eq!(expected_arr, sum_two_ints32(arr.clone(), arr.clone(), false));
+    assert_eq!(expected_arr, sum_two_ints32(arr.clone(), arr.clone(), true));
 }
