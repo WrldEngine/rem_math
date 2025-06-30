@@ -1,4 +1,4 @@
-name: Release rem_math lib workflow
+name: Release Rem Math
 
 on:
   push:
