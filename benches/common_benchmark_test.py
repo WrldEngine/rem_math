@@ -1,8 +1,9 @@
-import rmath as rm
+import rem_math as rm
 import numpy as np
 import pytest
 import time
 
+NUM_ITERATIONS = 10_000_000
 
 @pytest.mark.benchmark(
     group="arr_i32",
@@ -16,7 +17,7 @@ import time
 def test_sum_arr_i32(benchmark):
     @benchmark
     def result():
-        array = [i for i in range(100_000)]
+        array = [i for i in range(NUM_ITERATIONS)]
         sum_i32_result = rm.sum_arr_int32(array)
 
         return sum_i32_result
@@ -36,7 +37,7 @@ def test_sum_arr_i32(benchmark):
 def test_sum_arr_i32_simd(benchmark):
     @benchmark
     def result():
-        array = [i**2 for i in range(6)]
+        array = [i for i in range(NUM_ITERATIONS)]
         sum_i32_simd_result = rm.sum_arr_int32(array, simd=True)
 
         return sum_i32_simd_result
@@ -56,7 +57,7 @@ def test_sum_arr_i32_simd(benchmark):
 def test_numpy_sum(benchmark):
     @benchmark
     def result():
-        array = [i for i in range(100_000)]
+        array = [i for i in range(NUM_ITERATIONS)]
         np_result = np.sum(array)
 
         return np_result

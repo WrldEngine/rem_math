@@ -5,7 +5,7 @@ Work in progress
 ## Examples
 Sum of two 32-bit integer array
 ```py
-import rmath as rm
+from rem_math import rem_math as rm
 
 array = [i for i in range(100_000_000)]
 sum_two_i32_result = rm.sum_two_ints32(array, array, simd=True)

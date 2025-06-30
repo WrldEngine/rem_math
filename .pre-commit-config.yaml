@@ -1,0 +1,33 @@
+exclude: "docs|node_modules|migrations|env|config|.git|.tox|target"
+default_stages: [commit]
+fail_fast: true
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-symlinks
+      - id: check-yaml
+      - id: trailing-whitespace
+      - id: check-json
+      - id: debug-statements
+      - id: pretty-format-json
+
+  - repo: local
+    hooks:
+      - id: rustfmt
+        name: rustfmt
+        description: Check if all files follow the rustfmt style
+        entry: cargo fmt --all --check -- --color always
+        language: system
+        pass_filenames: false
+      
+      - id: cargocheck
+        name: cargocheck
+        description: Cargo checking
+        entry: cargo check
+        language: system
+        pass_filenames: false

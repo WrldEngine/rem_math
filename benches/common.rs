@@ -1,7 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
-use rmath::native::sum_arr_int32;
-use rmath::native::sum_two_floats32;
-use rmath::native::sum_two_ints32;
+use rem_math::native::sum_arr_int32;
+use rem_math::native::sum_two_floats32;
+use rem_math::native::sum_two_ints32;
 
 fn sum_arr_int32_benchmark(c: &mut Criterion) {
     let arr = black_box((1..1_000_000).collect::<Vec<i32>>());

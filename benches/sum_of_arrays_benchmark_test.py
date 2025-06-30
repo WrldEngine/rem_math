@@ -1,4 +1,4 @@
-import rmath as rm
+import rem_math as rm
 import numpy as np
 import pytest
 import time
