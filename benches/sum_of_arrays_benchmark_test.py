@@ -45,9 +45,7 @@ def test_sum_floatsf32(benchmark, large_float_array):
 def test_sum_floatsf32_simd(benchmark, large_float_array):
     @benchmark
     def result():
-        return rm.sum_two_floats32(
-            large_float_array, large_float_array, "simd"
-        )
+        return rm.sum_two_floats32(large_float_array, large_float_array, "simd")
 
     assert result is not None
 
@@ -64,9 +62,7 @@ def test_sum_floatsf32_simd(benchmark, large_float_array):
 def test_sum_floatsf32_multithreaded(benchmark, large_float_array):
     @benchmark
     def result():
-        return rm.sum_two_floats32(
-            large_float_array, large_float_array, "threading"
-        )
+        return rm.sum_two_floats32(large_float_array, large_float_array, "threading")
 
     assert result is not None
 

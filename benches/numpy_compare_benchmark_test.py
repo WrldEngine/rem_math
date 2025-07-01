@@ -5,9 +5,11 @@ import time
 
 NUM_ITERATIONS = 10_000_000
 
+
 @pytest.fixture(scope="module")
 def large_array():
     return np.array([i for i in range(NUM_ITERATIONS)], dtype=np.int32)
+
 
 @pytest.mark.benchmark(
     group="numpy_sum",
@@ -25,6 +27,7 @@ def test_numpy_sum(benchmark, large_array):
 
     assert result is not None
 
+
 @pytest.mark.benchmark(
     group="rm_sum",
     min_time=0.1,
@@ -40,6 +43,7 @@ def test_rm_sum(benchmark, large_array):
         return rm.sum_nparr_int32(large_array)
 
     assert result is not None
+
 
 @pytest.mark.benchmark(
     group="numpy_mul",
@@ -57,6 +61,7 @@ def test_np_mul(benchmark, large_array):
 
     assert result is not None
 
+
 @pytest.mark.benchmark(
     group="rm_mul",
     min_time=0.1,
@@ -73,6 +78,7 @@ def test_rm_mul(benchmark, large_array):
 
     assert result is not None
 
+
 @pytest.mark.benchmark(
     group="numpy_sum_two",
     min_time=0.1,
@@ -88,6 +94,7 @@ def test_numpy_sum_two(benchmark, large_array):
         return np.add(large_array, large_array)
 
     assert result is not None
+
 
 @pytest.mark.benchmark(
     group="rm_sum_two(i32)",

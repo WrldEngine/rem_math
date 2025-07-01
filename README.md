@@ -9,9 +9,14 @@ Work in progress
 Sum of two 32-bit integer array
 ```py
 from rem_math import rem_math as rm
+import numpy as np
 
 array = [i for i in range(100_000_000)]
+np_array = np.array([i for i in range(100_000_000)])
+
 sum_two_i32_result = rm.sum_two_ints32(array, array, simd=True)
+sum_of_array = rm.sum_arr_int32(array)
+sum_of_np_array = rm.sum_nparr_int32(np_array)
 
 print(sum_two_i32_result)
 ```
@@ -76,7 +81,6 @@ print(sum_two_i32_result)
     ```
 
 ### Compare with NumPy
-    ```
     -------------------------------------- benchmark 'numpy_sum': 1 tests --------------------------------------
     Name (time in ms)        Min     Max    Mean  StdDev  Median     IQR  Outliers       OPS  Rounds  Iterations
     ------------------------------------------------------------------------------------------------------------
@@ -88,7 +92,6 @@ print(sum_two_i32_result)
     ------------------------------------------------------------------------------------------------------------
     test_rm_sum           1.7189  1.8860  1.7523  0.0747  1.7189  0.0419       1;1  570.6719       5         100
     ------------------------------------------------------------------------------------------------------------
-    ```
 
 ## Benchmarks (Rust)
 
