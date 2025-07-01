@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Testing Rust modules
         run: |
-          cargo test --verbose
+          cargo test --lib --bins --tests --verbose
 
   linux:
     runs-on: ${{ matrix.platform.runner }}

@@ -5,6 +5,7 @@ import time
 
 NUM_ITERATIONS = 10_000_000
 
+
 @pytest.mark.benchmark(
     group="arr_i32",
     min_time=0.1,
@@ -18,9 +19,7 @@ def test_sum_arr_i32(benchmark):
     @benchmark
     def result():
         array = [i for i in range(NUM_ITERATIONS)]
-        sum_i32_result = rm.sum_arr_int32(array)
-
-        return sum_i32_result
+        return rm.sum_arr_int32(array)
 
     assert result is not None
 
@@ -38,9 +37,7 @@ def test_sum_arr_i32_simd(benchmark):
     @benchmark
     def result():
         array = [i for i in range(NUM_ITERATIONS)]
-        sum_i32_simd_result = rm.sum_arr_int32(array, simd=True)
-
-        return sum_i32_simd_result
+        return rm.sum_arr_int32(array, simd=True)
 
     assert result is not None
 
@@ -58,8 +55,6 @@ def test_numpy_sum(benchmark):
     @benchmark
     def result():
         array = [i for i in range(NUM_ITERATIONS)]
-        np_result = np.sum(array)
-
-        return np_result
+        return np.sum(array)
 
     assert result is not None
