@@ -12,7 +12,7 @@ from rem_math import rem_math as rm
 import numpy as np
 
 array = [i for i in range(100_000_000)]
-np_array = np.array([i for i in range(100_000_000)])
+np_array = np.array([i for i in range(100_000_000)], dtype=np.int32)
 
 sum_two_i32_result = rm.sum_two_ints32(array, array, simd=True)
 sum_of_array = rm.sum_arr_int32(array)
