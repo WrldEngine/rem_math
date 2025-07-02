@@ -8,7 +8,7 @@ Work in progress
 ## Examples
 Sum of two 32-bit integer array
 ```py
-from rem_math import rem_math as rm
+import rem_math as rm
 import numpy as np
 
 array = [i for i in range(100_000_000)]
