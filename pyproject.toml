@@ -1,6 +1,6 @@
 [project]
 name = "rem_math"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = [
     {name = "WrldEngine",email = "kamran_pulatov@outlook.com"}
@@ -16,9 +16,7 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
-python-source = "rem_math"
-module-name = "rem_math"
-include = ["rem_math/**/*", "rem_math/py.typed"]
+module-name = "rem_math._rem_math"
 
 [tool.poetry.group.dev.dependencies]
 pytest-benchmark = "^5.1.0"

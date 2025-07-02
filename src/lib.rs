@@ -142,7 +142,7 @@ pub fn multiply_two_ints32(
 }
 
 #[pymodule]
-fn rem_math(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn _rem_math(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(sum_nparr_int32, m)?)?;
     m.add_function(wrap_pyfunction!(sum_arr_int32, m)?)?;
     m.add_function(wrap_pyfunction!(sum_two_floats32, m)?)?;

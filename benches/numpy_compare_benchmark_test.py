@@ -5,7 +5,6 @@ import time
 
 NUM_ITERATIONS = 10_000_000
 
-
 @pytest.fixture(scope="module")
 def large_array():
     return np.array([i for i in range(NUM_ITERATIONS)], dtype=np.int32)
