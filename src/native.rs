@@ -1,10 +1,5 @@
-#![feature(stdsimd)]
-#![feature(available_parallelism)]
-use std::thread::available_parallelism;
-
 #[cfg(target_arch = "x86_64")]
 use core::arch::x86_64::*;
-
 use rayon::prelude::*;
 
 const WAY_8_SZ: usize = 8;
@@ -52,9 +47,8 @@ unsafe fn sum_arr_int32_simd(arr: &[i32]) -> i64 {
 /// assert_eq!(arr3, vec![2.0; 10]);
 /// ```
 #[target_feature(enable = "sse")]
-unsafe fn sum_two_floats32_simd(arr_1: &[f32], arr_2: &[f32]) -> Vec<f64> {
+unsafe fn sum_two_floats32_simd(arr_1: &[f32], arr_2: &[f32], result: &mut [f64]) {
     let arr_len = arr_1.len();
-    let mut result = vec![0.0f64; arr_len];
     let chunks = arr_len / WAY_4_SZ;
 
     for i in 0..chunks {
@@ -76,8 +70,6 @@ unsafe fn sum_two_floats32_simd(arr_1: &[f32], arr_2: &[f32]) -> Vec<f64> {
     for i in (chunks * WAY_4_SZ)..arr_len {
         result[i] = (arr_1[i] + arr_2[i]) as f64;
     }
-
-    result
 }
 
 /// # Sum values of indexes of two integer 32 arrays
@@ -91,9 +83,8 @@ unsafe fn sum_two_floats32_simd(arr_1: &[f32], arr_2: &[f32]) -> Vec<f64> {
 /// assert_eq!(arr3, vec![2; 10]);
 /// ```
 #[target_feature(enable = "avx2")]
-unsafe fn sum_two_ints32_simd(arr_1: &[i32], arr_2: &[i32]) -> Vec<i64> {
+unsafe fn sum_two_ints32_simd(arr_1: &[i32], arr_2: &[i32], result: &mut [i64]) {
     let len = arr_1.len();
-    let mut result = vec![0i64; len];
     let chunks = len / WAY_8_SZ;
 
     for i in 0..chunks {
@@ -120,8 +111,6 @@ unsafe fn sum_two_ints32_simd(arr_1: &[i32], arr_2: &[i32]) -> Vec<i64> {
     for i in (chunks * WAY_8_SZ)..len {
         result[i] = (arr_1[i] + arr_2[i]) as i64;
     }
-
-    result
 }
 
 /// # Multiply values of indexes of two integer 32 arrays
@@ -156,7 +145,7 @@ unsafe fn multiply_two_ints32_simd(arr_1: &[i32], arr_2: &[i32]) -> Vec<i64> {
     }
 
     for i in (chunks * WAY_8_SZ)..arr_len {
-        result[i] = (arr_1[i] as i64) * (arr_2[i] as i64);
+        result[i] = (arr_1[i] * arr_2[i]) as i64;
     }
 
     result
@@ -174,38 +163,56 @@ pub fn sum_arr_int32(arr: &[i32], simd: bool) -> i64 {
 
 #[inline(always)]
 pub fn sum_two_floats32(arr_1: &[f32], arr_2: &[f32], method: &str) -> Vec<f64> {
+    let mut result: Vec<f64> = vec![0.0f64; arr_1.len()];
+
     match method {
-        "simd" => unsafe { return sum_two_floats32_simd(arr_1, arr_2) },
+        "simd" => {
+            unsafe { sum_two_floats32_simd(arr_1, arr_2, result.as_mut_slice()) }
+            result
+        }
         "threading" => {
-            return arr_1
-                .par_iter()
+            (arr_1.par_iter())
                 .zip(arr_2.par_iter())
-                .map(|(&a, &b)| (a + b) as f64)
-                .collect()
+                .map(|(a1, a2)| (*a1 + *a2) as f64)
+                .collect_into_vec(&mut result);
+            result
         }
         &_ => {
-            let mut result: Vec<f64> = vec![0.0; arr_1.len()];
-            for ((arr_3_val, arr_1_val), arr_2_val) in result.iter_mut().zip(arr_1).zip(arr_2) {
+            for ((arr_3_val, arr_1_val), arr_2_val) in
+                result.iter_mut().zip(arr_1.iter()).zip(arr_2.iter())
+            {
                 *arr_3_val = (arr_1_val + arr_2_val) as f64;
             }
-
-            return result;
+            result
         }
     }
 }
 
 #[inline(always)]
-pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], simd: bool) -> Vec<i64> {
-    if simd {
-        unsafe { return sum_two_ints32_simd(arr_1, arr_2) }
-    }
+pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
+    let mut result: Vec<i64> = vec![0i64; arr_1.len()];
 
-    let mut result: Vec<i64> = vec![0; arr_1.len()];
-    for ((arr_3_val, arr_1_val), arr_2_val) in result.iter_mut().zip(arr_1).zip(arr_2) {
-        *arr_3_val = (arr_1_val + arr_2_val) as i64;
+    match method {
+        "simd" => {
+            unsafe { sum_two_ints32_simd(arr_1, arr_2, result.as_mut_slice()) };
+            result
+        }
+        "threading" => {
+            (arr_1.par_iter())
+                .zip(arr_2.par_iter())
+                .map(|(a1, a2)| (*a1 + *a2) as i64)
+                .collect_into_vec(&mut result);
+            result
+        }
+        &_ => {
+            for ((arr_3_val, arr_1_val), arr_2_val) in
+                result.iter_mut().zip(arr_1.iter()).zip(arr_2.iter())
+            {
+                *arr_3_val = (arr_1_val + arr_2_val) as i64;
+            }
+            result
+        }
     }
-
-    result
 }
 
 #[inline(always)]

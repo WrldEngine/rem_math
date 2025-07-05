@@ -3,21 +3,21 @@ import numpy as np
 import pytest
 import time
 
-NUM_ITERATIONS = 16_000_000
+NUM_ITERATIONS = 10_000_000
 
 
 @pytest.fixture(scope="module")
 def large_array():
-    return [i for i in range(NUM_ITERATIONS)]
+    return np.array([i for i in range(NUM_ITERATIONS)], dtype=np.int32)
 
 
 @pytest.fixture(scope="module")
-def large_float_array():
-    return [float(i) for i in range(NUM_ITERATIONS)]
+def large_naive_array():
+    return [i for i in range(NUM_ITERATIONS)]
 
 
 @pytest.mark.benchmark(
-    group="sum_floatsf32",
+    group="numpy_sum",
     min_time=0.1,
     max_time=0.5,
     min_rounds=5,
@@ -25,16 +25,16 @@ def large_float_array():
     disable_gc=True,
     warmup=False,
 )
-def test_sum_floatsf32(benchmark, large_float_array):
+def test_numpy_sum(benchmark, large_array):
     @benchmark
     def result():
-        return rm.sum_two_floats32(large_float_array, large_float_array)
+        return np.sum(large_array)
 
     assert result is not None
 
 
 @pytest.mark.benchmark(
-    group="sum_floatsf32_simd",
+    group="rm_sum",
     min_time=0.1,
     max_time=0.5,
     min_rounds=5,
@@ -42,16 +42,16 @@ def test_sum_floatsf32(benchmark, large_float_array):
     disable_gc=True,
     warmup=False,
 )
-def test_sum_floatsf32_simd(benchmark, large_float_array):
+def test_rm_sum(benchmark, large_array):
     @benchmark
     def result():
-        return rm.sum_two_floats32(large_float_array, large_float_array, "simd")
+        return rm.sum_nparr_int32(large_array)
 
     assert result is not None
 
 
 @pytest.mark.benchmark(
-    group="sum_floatsf32_multithreaded",
+    group="numpy_mul",
     min_time=0.1,
     max_time=0.5,
     min_rounds=5,
@@ -59,16 +59,16 @@ def test_sum_floatsf32_simd(benchmark, large_float_array):
     disable_gc=True,
     warmup=False,
 )
-def test_sum_floatsf32_multithreaded(benchmark, large_float_array):
+def test_np_mul(benchmark, large_array):
     @benchmark
     def result():
-        return rm.sum_two_floats32(large_float_array, large_float_array, "threading")
+        return np.multiply(large_array, large_array)
 
     assert result is not None
 
 
 @pytest.mark.benchmark(
-    group="numpy_arr_sum",
+    group="rm_mul",
     min_time=0.1,
     max_time=0.5,
     min_rounds=5,
@@ -76,7 +76,24 @@ def test_sum_floatsf32_multithreaded(benchmark, large_float_array):
     disable_gc=True,
     warmup=False,
 )
-def test_numpy_arr_sum(benchmark, large_array):
+def test_rm_mul(benchmark, large_array):
+    @benchmark
+    def result():
+        return rm.multiply_two_nparr_ints32(large_array, large_array, "threading")
+
+    assert result is not None
+
+
+@pytest.mark.benchmark(
+    group="numpy_sum_two",
+    min_time=0.1,
+    max_time=0.5,
+    min_rounds=5,
+    timer=time.time,
+    disable_gc=True,
+    warmup=False,
+)
+def test_numpy_sum_two(benchmark, large_array):
     @benchmark
     def result():
         return np.add(large_array, large_array)
@@ -85,7 +102,7 @@ def test_numpy_arr_sum(benchmark, large_array):
 
 
 @pytest.mark.benchmark(
-    group="sum_ints32",
+    group="rm_sum_two(i32)",
     min_time=0.1,
     max_time=0.5,
     min_rounds=5,
@@ -93,26 +110,9 @@ def test_numpy_arr_sum(benchmark, large_array):
     disable_gc=True,
     warmup=False,
 )
-def test_sum_ints32(benchmark, large_array):
+def test_rm_sum_two_ints32(benchmark, large_array):
     @benchmark
     def result():
-        return rm.sum_two_ints32(large_array, large_array)
-
-    assert result is not None
-
-
-@pytest.mark.benchmark(
-    group="sum_ints32_simd",
-    min_time=0.1,
-    max_time=0.5,
-    min_rounds=5,
-    timer=time.time,
-    disable_gc=True,
-    warmup=False,
-)
-def test_sum_ints32_simd(benchmark, large_array):
-    @benchmark
-    def result():
-        return rm.sum_two_ints32(large_array, large_array, simd=True)
+        return rm.sum_two_nparr_ints32(large_array, large_array, "threading")
 
     assert result is not None

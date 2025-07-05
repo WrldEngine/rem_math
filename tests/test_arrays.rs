@@ -25,8 +25,9 @@ fn test_sum_two_ints32() {
     let arr = [1; 5];
     let expected_arr = vec![2; 5];
 
-    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, false));
-    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, true));
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, ""));
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "simd"));
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "threading"));
 }
 
 #[test]

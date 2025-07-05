@@ -53,15 +53,23 @@ fn sum_two_floats32_with_mthreaded_benchmark(c: &mut Criterion) {
 fn sum_two_ints32_with_benchmark(c: &mut Criterion) {
     let arr = black_box(vec![1; NUM_ITERATIONS]);
     c.bench_function("Array accumulation of two integer arrays", |b| {
-        b.iter(|| sum_two_ints32(&arr, &arr, false))
+        b.iter(|| sum_two_ints32(&arr, &arr, ""))
     });
 }
 
 fn sum_two_ints32_with_simd_benchmark(c: &mut Criterion) {
     let arr = black_box(vec![1; NUM_ITERATIONS]);
     c.bench_function("Array accumulation of two integer arrays with SIMD", |b| {
-        b.iter(|| sum_two_ints32(&arr, &arr, true))
+        b.iter(|| sum_two_ints32(&arr, &arr, "simd"))
     });
+}
+
+fn sum_two_ints32_with_mthreaded_benchmark(c: &mut Criterion) {
+    let arr = black_box(vec![1; NUM_ITERATIONS]);
+    c.bench_function(
+        "Array accumulation of two integer arrays with multi threading",
+        |b| b.iter(|| sum_two_ints32(&arr, &arr, "threading")),
+    );
 }
 
 fn mul_two_ints32_benchmark(c: &mut Criterion) {
@@ -95,6 +103,7 @@ criterion_group!(
     sum_two_floats32_with_mthreaded_benchmark,
     sum_two_ints32_with_benchmark,
     sum_two_ints32_with_simd_benchmark,
+    sum_two_ints32_with_mthreaded_benchmark,
     mul_two_ints32_benchmark,
     mul_two_ints32_with_simd_benchmark,
     mul_two_ints32_with_mthreaded_benchmark,
