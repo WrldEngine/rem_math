@@ -42,6 +42,19 @@ jobs:
         run: |
           cargo test --lib --bins --tests --verbose
 
+  test-gpu:
+    runs-on: gpu-t4-4-core
+    steps:
+      - name: Installing OpenCL
+        run: |
+          sudo apt update
+          sudo apt install ocl-icd-opencl-dev
+
+      - uses: actions/checkout@v4
+      - name: Testing Rust modules
+        run: |
+          cargo test --lib --bins --tests --verbose
+
   linux:
     runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 200
@@ -153,9 +166,9 @@ jobs:
 
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: gpu-t4-4-core
     if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
-    needs: [test, sdist]
+    needs: [test-gpu, sdist]
     permissions:
       id-token: write
       contents: write
