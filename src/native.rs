@@ -2,6 +2,8 @@
 use core::arch::x86_64::*;
 use rayon::prelude::*;
 
+use crate::gpu;
+
 const WAY_8_SZ: usize = 8;
 const WAY_4_SZ: usize = 4;
 
@@ -202,6 +204,10 @@ pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
                 .zip(arr_2.par_iter())
                 .map(|(a1, a2)| (*a1 + *a2) as i64)
                 .collect_into_vec(&mut result);
+            result
+        }
+        "gpu" => {
+            gpu::sum_two_ints32(arr_1, arr_2, &mut result);
             result
         }
         &_ => {

@@ -1,6 +1,7 @@
 use numpy::{Complex64, IntoPyArray, PyArray1, PyReadonlyArray1};
 use pyo3::{exceptions, prelude::*};
 
+pub mod gpu;
 pub mod native;
 
 #[pyfunction]
@@ -110,7 +111,6 @@ pub fn multiply_two_nparr_ints32<'py>(
     }
 
     let result = native::multiply_two_ints32(arr_1.as_slice()?, arr_2.as_slice()?, method);
-
     Ok(result.into_pyarray(_py))
 }
 

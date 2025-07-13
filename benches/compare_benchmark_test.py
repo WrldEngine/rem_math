@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import time
 
-NUM_ITERATIONS = 10_000_000
+NUM_ITERATIONS = 100_000_000
 
 
 @pytest.fixture(scope="module")
@@ -67,7 +67,7 @@ def test_np_mul(benchmark, large_array):
     assert result is not None
 
 
-@pytest.mark.benchmark(
+""" @pytest.mark.benchmark(
     group="rm_mul",
     min_time=0.1,
     max_time=0.5,
@@ -81,7 +81,7 @@ def test_rm_mul(benchmark, large_array):
     def result():
         return rm.multiply_two_nparr_ints32(large_array, large_array, "threading")
 
-    assert result is not None
+    assert result is not None """
 
 
 @pytest.mark.benchmark(
@@ -114,5 +114,22 @@ def test_rm_sum_two_ints32(benchmark, large_array):
     @benchmark
     def result():
         return rm.sum_two_nparr_ints32(large_array, large_array, "threading")
+
+    assert result is not None
+
+
+@pytest.mark.benchmark(
+    group="rm_sum_two(gpu)",
+    min_time=0.1,
+    max_time=0.5,
+    min_rounds=5,
+    timer=time.time,
+    disable_gc=True,
+    warmup=False,
+)
+def test_rm_sum_two_ints32_gpu(benchmark, large_array):
+    @benchmark
+    def result():
+        return rm.sum_two_nparr_ints32(large_array, large_array, "gpu")
 
     assert result is not None

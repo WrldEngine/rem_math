@@ -28,6 +28,7 @@ fn test_sum_two_ints32() {
     assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, ""));
     assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "simd"));
     assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "threading"));
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "gpu"));
 }
 
 #[test]

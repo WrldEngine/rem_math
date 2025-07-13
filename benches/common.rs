@@ -72,6 +72,13 @@ fn sum_two_ints32_with_mthreaded_benchmark(c: &mut Criterion) {
     );
 }
 
+fn sum_two_ints32_with_gpu_benchmark(c: &mut Criterion) {
+    let arr = black_box(vec![1; NUM_ITERATIONS]);
+    c.bench_function("Array accumulation of two integer arrays with GPU", |b| {
+        b.iter(|| sum_two_ints32(&arr, &arr, "GPU"))
+    });
+}
+
 fn mul_two_ints32_benchmark(c: &mut Criterion) {
     let arr = black_box(vec![1; NUM_ITERATIONS]);
     c.bench_function("Array multiply of two integer arrays", |b| {
@@ -104,6 +111,7 @@ criterion_group!(
     sum_two_ints32_with_benchmark,
     sum_two_ints32_with_simd_benchmark,
     sum_two_ints32_with_mthreaded_benchmark,
+    sum_two_ints32_with_gpu_benchmark,
     mul_two_ints32_benchmark,
     mul_two_ints32_with_simd_benchmark,
     mul_two_ints32_with_mthreaded_benchmark,

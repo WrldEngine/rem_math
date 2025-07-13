@@ -1,6 +1,6 @@
 [package]
 name = "rem_math"
-version = "0.1.7"
+version = "0.2.7"
 edition = "2021"
 
 [lib]
@@ -19,6 +19,7 @@ crate-type = ["cdylib", "rlib"]
 numpy = "0.25.0"
 pyo3 = { version = "0.25.1", features = ["extension-module"] }
 rayon = "1.10.0"
+ocl = "0.19"
 
 [dev-dependencies]
 criterion = "0.3"
