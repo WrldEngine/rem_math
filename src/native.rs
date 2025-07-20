@@ -207,7 +207,8 @@ pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
             result
         }
         "gpu" => {
-            gpu::sum_two_ints32(arr_1, arr_2, &mut result);
+            let dispatcher = gpu::GPUKernelsDispatcher::new();
+            dispatcher.sum_two_ints32(arr_1, arr_2, &mut result);
             result
         }
         &_ => {
@@ -239,6 +240,24 @@ pub fn multiply_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i6
             }
 
             return result;
+        }
+    }
+}
+
+pub fn dot_two_floats32(arr_1: &[f32], arr_2: &[f32], method: &str) -> f32 {
+    match method {
+        "gpu" => {
+            let dispatcher = gpu::GPUKernelsDispatcher::new();
+            let result = dispatcher.dot_floats32(arr_1, arr_2);
+            result
+        }
+        &_ => {
+            let mut result = 0.0f32;
+            for i in 0..arr_1.len() {
+                result += arr_1[i] * arr_2[i];
+            }
+
+            result
         }
     }
 }

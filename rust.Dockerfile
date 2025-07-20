@@ -15,14 +15,16 @@ RUN apt-get update -y && \
   apt-get install -y pkg-config make g++ libssl-dev && \
   rustup target add x86_64-unknown-linux-gnu
 
+# OpenCLのライブラリインストールをします
+RUN apt update
+RUN apt install ocl-icd-opencl-dev -y
+
 RUN --mount=type=bind,source=src,target=src \
     --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
     --mount=type=bind,source=Cargo.lock,target=Cargo.lock \
     --mount=type=cache,target=/$APP_WORKDIR/target/ \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     RUSTFLAGS="-Z threads=8" cargo +nightly build --release --locked
-
-WORKDIR ${APP_WORKDIR}
 
 ARG UID=10001
 RUN adduser \
@@ -35,5 +37,4 @@ RUN adduser \
     appuser
 USER appuser
 
-COPY --from=build ${APP_WORKDIR} ${APP_WORKDIR}
 ENTRYPOINT ["/bin/bash", "-c"]

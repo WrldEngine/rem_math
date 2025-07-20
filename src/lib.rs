@@ -135,6 +135,48 @@ pub fn multiply_two_ints32(
     ))
 }
 
+#[pyfunction]
+#[pyo3(signature = (arr_1, arr_2, method = ""))]
+pub fn dot_two_nparr_floats32<'py>(
+    _py: Python<'py>,
+    arr_1: PyReadonlyArray1<'py, f32>,
+    arr_2: PyReadonlyArray1<'py, f32>,
+    method: &'py str,
+) -> PyResult<f32> {
+    if arr_1.len()? != arr_2.len()? {
+        return Err(exceptions::PyBaseException::new_err(
+            "Array lengths should be equal",
+        ));
+    }
+
+    Ok(native::dot_two_floats32(
+        arr_1.as_slice()?,
+        arr_2.as_slice()?,
+        method,
+    ))
+}
+
+#[pyfunction]
+#[pyo3(signature = (arr_1, arr_2, method = ""))]
+pub fn dot_two_floats32(
+    _py: Python,
+    arr_1: Vec<f32>,
+    arr_2: Vec<f32>,
+    method: &str,
+) -> PyResult<f32> {
+    if arr_1.len() != arr_2.len() {
+        return Err(exceptions::PyBaseException::new_err(
+            "Array lengths should be equal",
+        ));
+    }
+
+    Ok(native::dot_two_floats32(
+        arr_1.as_slice(),
+        arr_2.as_slice(),
+        method,
+    ))
+}
+
 #[pymodule]
 fn _rem_math(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(sum_nparr_int32, m)?)?;
@@ -145,5 +187,7 @@ fn _rem_math(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(sum_two_nparr_ints32, m)?)?;
     m.add_function(wrap_pyfunction!(multiply_two_ints32, m)?)?;
     m.add_function(wrap_pyfunction!(multiply_two_nparr_ints32, m)?)?;
+    m.add_function(wrap_pyfunction!(dot_two_floats32, m)?)?;
+    m.add_function(wrap_pyfunction!(dot_two_nparr_floats32, m)?)?;
     Ok(())
 }
