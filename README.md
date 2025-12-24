@@ -155,9 +155,17 @@ Found 15 outliers among 100 measurements (15.00%)
   8 (8.00%) high severe
 ```
 
+## Integrations (java will be done later)
+<img height="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/python.png">
+<img height="50" src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/java.png">
+
+## GPU Integrations
+![nVIDIA](https://img.shields.io/badge/cuda-000000.svg?style=for-the-badge&logo=nVIDIA&logoColor=green)
+![nVIDIA](https://img.shields.io/badge/opencl-000000.svg?style=for-the-badge&logo=opencl&logoColor=green)
+
 ## Roadmap
 
-- Add GPU-accelerated operations for improved performance.
+- Add GPU-accelerated operations for improved performance. (__in progress__)
 - Implement own custom type objects for best performance from ecosystem.
 - Expand mathematical functionality with additional features and algorithms.
 

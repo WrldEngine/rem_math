@@ -10,16 +10,18 @@ requires-python = ">=3.11"
 dependencies = [
 ]
 
-
 [build-system]
 requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
+python-source = "python"
 module-name = "rem_math._rem_math"
 
-[tool.poetry.group.dev.dependencies]
-pytest-benchmark = "^5.1.0"
-numpy = "^2.3.1"
-maturin = "^1.9.0"
-mkdocs = "^1.6.1"
+[dependency-groups]
+dev = [
+    "maturin>=1.10.2",
+    "numpy>=2.4.0",
+    "pytest-benchmark>=5.2.3",
+    "mkdocs>=1.6.1",
+]

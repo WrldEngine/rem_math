@@ -1,0 +1,11 @@
+[package]
+name = "rem_math_gpu"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0"
+
+[dependencies.opencl3]
+version = "0.11"
+features = ["CL_VERSION_2_1", "CL_VERSION_2_2", "CL_VERSION_3_0"]

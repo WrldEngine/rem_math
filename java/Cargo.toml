@@ -1,0 +1,8 @@
+[package]
+name = "rem_math_java"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0"
+jni = "0.21.1"

@@ -1,7 +1,8 @@
-use numpy::{Complex64, IntoPyArray, PyArray1, PyReadonlyArray1};
+extern crate rem_math_gpu;
+
+use numpy::{IntoPyArray, PyArray1, PyReadonlyArray1};
 use pyo3::{exceptions, prelude::*};
 
-pub mod gpu;
 pub mod native;
 
 #[pyfunction]
@@ -72,7 +73,13 @@ pub fn sum_two_nparr_ints32<'py>(
 
     let result = native::sum_two_ints32(arr_1.as_slice()?, arr_2.as_slice()?, method);
 
-    Ok(result.into_pyarray(_py))
+    match result {
+        Ok(r) => Ok(r.into_pyarray(_py)),
+        Err(e) => Err(exceptions::PyBaseException::new_err(format!(
+            "failed to execute, reason: {}",
+            e.to_string()
+        ))),
+    }
 }
 
 #[pyfunction]
@@ -89,11 +96,15 @@ pub fn sum_two_ints32(
         ));
     }
 
-    Ok(native::sum_two_ints32(
-        arr_1.as_slice(),
-        arr_2.as_slice(),
-        method,
-    ))
+    let result = native::sum_two_ints32(arr_1.as_slice(), arr_2.as_slice(), method);
+
+    match result {
+        Ok(r) => Ok(r),
+        Err(e) => Err(exceptions::PyBaseException::new_err(format!(
+            "failed to execute, reason: {}",
+            e.to_string()
+        ))),
+    }
 }
 
 #[pyfunction]
@@ -149,11 +160,15 @@ pub fn dot_two_nparr_floats32<'py>(
         ));
     }
 
-    Ok(native::dot_two_floats32(
-        arr_1.as_slice()?,
-        arr_2.as_slice()?,
-        method,
-    ))
+    let result = native::dot_two_floats32(arr_1.as_slice()?, arr_2.as_slice()?, method);
+
+    match result {
+        Ok(r) => Ok(r),
+        Err(e) => Err(exceptions::PyBaseException::new_err(format!(
+            "failed to execute, reason: {}",
+            e.to_string()
+        ))),
+    }
 }
 
 #[pyfunction]
@@ -170,11 +185,43 @@ pub fn dot_two_floats32(
         ));
     }
 
-    Ok(native::dot_two_floats32(
-        arr_1.as_slice(),
-        arr_2.as_slice(),
-        method,
-    ))
+    let result = native::dot_two_floats32(arr_1.as_slice(), arr_2.as_slice(), method);
+
+    match result {
+        Ok(r) => Ok(r),
+        Err(e) => Err(exceptions::PyBaseException::new_err(format!(
+            "failed to execute, reason: {}",
+            e.to_string()
+        ))),
+    }
+}
+
+#[pyfunction]
+#[pyo3(signature = (arr_1, arr_2, method = ""))]
+pub fn mul_mat_floats32(
+    _py: Python,
+    arr_1: Vec<Vec<f32>>,
+    arr_2: Vec<Vec<f32>>,
+    method: &str,
+) -> PyResult<Vec<Vec<f32>>> {
+    if arr_1.len() != arr_2.len() {
+        return Err(exceptions::PyBaseException::new_err(
+            "Array lengths should be equal",
+        ));
+    }
+
+    let refs_arr_1: Vec<&[f32]> = arr_1.iter().map(|x| x.as_slice()).collect();
+    let refs_arr_2: Vec<&[f32]> = arr_1.iter().map(|x| x.as_slice()).collect();
+
+    let result = native::mul_matrix(&refs_arr_1, &refs_arr_2, method);
+
+    match result {
+        Ok(r) => Ok(r),
+        Err(e) => Err(exceptions::PyBaseException::new_err(format!(
+            "failed to execute, reason: {}",
+            e.to_string()
+        ))),
+    }
 }
 
 #[pymodule]
@@ -189,5 +236,6 @@ fn _rem_math(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(multiply_two_nparr_ints32, m)?)?;
     m.add_function(wrap_pyfunction!(dot_two_floats32, m)?)?;
     m.add_function(wrap_pyfunction!(dot_two_nparr_floats32, m)?)?;
+    m.add_function(wrap_pyfunction!(mul_mat_floats32, m)?)?;
     Ok(())
 }

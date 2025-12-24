@@ -19,10 +19,10 @@ crate-type = ["cdylib", "rlib"]
 numpy = "0.25.0"
 pyo3 = { version = "0.25.1", features = ["extension-module"] }
 rayon = "1.10.0"
+anyhow = "1.0"
 
-[dependencies.opencl3]
-version = "0.11"
-features = ["CL_VERSION_2_1", "CL_VERSION_2_2", "CL_VERSION_3_0"]
+[dependencies.rem_math_gpu]
+path = "rem_math_gpu"
 
 [dev-dependencies]
 criterion = "0.3"
@@ -34,3 +34,8 @@ harness = false
 [profile.release]
 lto = true
 codegen-units = 1
+
+[workspace]
+members = [
+  "rem_math_gpu", "rem_math_simd",
+]

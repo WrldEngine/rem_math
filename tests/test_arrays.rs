@@ -25,10 +25,13 @@ fn test_sum_two_ints32() {
     let arr = [1; 5];
     let expected_arr = vec![2; 5];
 
-    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, ""));
-    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "simd"));
-    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "threading"));
-    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "gpu"));
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "").unwrap());
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "simd").unwrap());
+    assert_eq!(
+        expected_arr,
+        sum_two_ints32(&arr, &arr, "threading").unwrap()
+    );
+    assert_eq!(expected_arr, sum_two_ints32(&arr, &arr, "gpu").unwrap());
 }
 
 #[test]

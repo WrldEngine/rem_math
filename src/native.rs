@@ -1,8 +1,9 @@
+use anyhow::Error;
+use rem_math_gpu::libopencl;
+
 #[cfg(target_arch = "x86_64")]
 use core::arch::x86_64::*;
 use rayon::prelude::*;
-
-use crate::gpu;
 
 const WAY_8_SZ: usize = 8;
 const WAY_4_SZ: usize = 4;
@@ -191,25 +192,25 @@ pub fn sum_two_floats32(arr_1: &[f32], arr_2: &[f32], method: &str) -> Vec<f64> 
 }
 
 #[inline(always)]
-pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
+pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> anyhow::Result<Vec<i64>> {
     let mut result: Vec<i64> = vec![0i64; arr_1.len()];
 
     match method {
         "simd" => {
             unsafe { sum_two_ints32_simd(arr_1, arr_2, result.as_mut_slice()) };
-            result
+            Ok(result)
         }
         "threading" => {
             (arr_1.par_iter())
                 .zip(arr_2.par_iter())
                 .map(|(a1, a2)| (*a1 + *a2) as i64)
                 .collect_into_vec(&mut result);
-            result
+            Ok(result)
         }
         "gpu" => {
-            let dispatcher = gpu::GPUKernelsDispatcher::new();
-            dispatcher.sum_two_ints32(arr_1, arr_2, &mut result);
-            result
+            let dispatcher = libopencl::GPUKernelsDispatcher::new()?;
+            let _ = dispatcher.sum_two_ints32(arr_1, arr_2, &mut result);
+            Ok(result)
         }
         &_ => {
             for ((arr_3_val, arr_1_val), arr_2_val) in
@@ -217,7 +218,7 @@ pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
             {
                 *arr_3_val = (arr_1_val + arr_2_val) as i64;
             }
-            result
+            Ok(result)
         }
     }
 }
@@ -225,31 +226,30 @@ pub fn sum_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
 #[inline(always)]
 pub fn multiply_two_ints32(arr_1: &[i32], arr_2: &[i32], method: &str) -> Vec<i64> {
     match method {
-        "simd" => unsafe { return multiply_two_ints32_simd(arr_1, arr_2) },
-        "threading" => {
-            return arr_1
-                .par_iter()
-                .zip(arr_2.par_iter())
-                .map(|(&a, &b)| (a * b) as i64)
-                .collect()
-        }
+        "simd" => unsafe { multiply_two_ints32_simd(arr_1, arr_2) },
+        "threading" => arr_1
+            .par_iter()
+            .zip(arr_2.par_iter())
+            .map(|(&a, &b)| (a * b) as i64)
+            .collect(),
         &_ => {
             let mut result: Vec<i64> = vec![0; arr_1.len()];
             for i in 0..arr_1.len() {
                 result[i] = (arr_1[i] * arr_2[i]) as i64
             }
 
-            return result;
+            result
         }
     }
 }
 
-pub fn dot_two_floats32(arr_1: &[f32], arr_2: &[f32], method: &str) -> f32 {
+#[inline(always)]
+pub fn dot_two_floats32(arr_1: &[f32], arr_2: &[f32], method: &str) -> anyhow::Result<f32> {
     match method {
         "gpu" => {
-            let dispatcher = gpu::GPUKernelsDispatcher::new();
-            let result = dispatcher.dot_floats32(arr_1, arr_2);
-            result
+            let dispatcher = libopencl::GPUKernelsDispatcher::new()?;
+            let result = dispatcher.dot_floats32(arr_1, arr_2)?;
+            Ok(result)
         }
         &_ => {
             let mut result = 0.0f32;
@@ -257,7 +257,68 @@ pub fn dot_two_floats32(arr_1: &[f32], arr_2: &[f32], method: &str) -> f32 {
                 result += arr_1[i] * arr_2[i];
             }
 
-            result
+            Ok(result)
+        }
+    }
+}
+
+#[inline(always)]
+pub fn mul_matrix(
+    arr_1: &[&[f32]],
+    arr_2: &[&[f32]],
+    method: &str,
+) -> anyhow::Result<Vec<Vec<f32>>> {
+    match method {
+        "gpu" => {
+            // TODO: Avoid this unnecessary copying, and calculate directly linear
+            let m = arr_1.len();
+            let n = arr_2[0].len();
+            let k = arr_2.len();
+
+            let mut result_matrix: Vec<Vec<f32>> = vec![vec![0.0f32; n]; m];
+
+            let mut temp_mat_buf_arr_1 = vec![0.0f32; m * k];
+            let mut temp_mat_buf_arr_2 = vec![0.0f32; n * k];
+            let mut temp_mat_buf_result = vec![0.0f32; n * m];
+
+            for i in 0..(m * k) {
+                for j in 0..m {
+                    for l in 0..k {
+                        temp_mat_buf_arr_1[i] = arr_1[j][l];
+                    }
+                }
+            }
+
+            for i in 0..(n * k) {
+                for j in 0..n {
+                    for l in 0..k {
+                        temp_mat_buf_arr_2[i] = arr_2[j][l];
+                    }
+                }
+            }
+
+            let dispatcher = libopencl::GPUKernelsDispatcher::new()?;
+            dispatcher.mul_mat(
+                m,
+                n,
+                k,
+                &temp_mat_buf_arr_1,
+                &temp_mat_buf_arr_2,
+                &mut temp_mat_buf_result,
+            )?;
+
+            for mn in 0..(m * n) {
+                for i in 0..n {
+                    for j in 0..m {
+                        result_matrix[i][j] = temp_mat_buf_result[mn];
+                    }
+                }
+            }
+
+            Ok(result_matrix)
+        }
+        &_ => {
+            return Err(Error::msg("Current method not implemented right now"));
         }
     }
 }

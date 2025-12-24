@@ -101,6 +101,9 @@ ipython_config.py
 #   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
 poetry.lock
 
+# UV
+uv.lock
+
 # Cargo
 Cargo.lock
 
@@ -167,3 +170,7 @@ cython_debug/
 # Rust
 /target
 .env
+
+test.py
+
+*.class
