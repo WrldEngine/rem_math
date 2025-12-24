@@ -1,6 +1,6 @@
 [project]
 name = "rem_math"
-version = "0.2.8"
+version = "0.2.9"
 description = ""
 authors = [
     {name = "WrldEngine",email = "kamran_pulatov@outlook.com"}
